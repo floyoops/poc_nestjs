@@ -4,13 +4,12 @@ import {ArticleService} from './Infra/Service/ArticleService';
 @Controller()
 export class AppController {
   constructor(
-      @Inject(ArticleService)
-      private readonly articleService: ArticleService,
+      @Inject(ArticleService) private readonly articleService: ArticleService,
   ) {}
 
   @Get()
   getHello(): string {
     this.articleService.createNewArticle('test');
-    return 'aaa';
+    return 'Hello World!';
   }
 }

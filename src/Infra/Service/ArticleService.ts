@@ -9,7 +9,7 @@ export class ArticleService {
 
     async createNewArticle(title: string) {
         return this.commandBus.execute(
-            new CreateAnArticleCommand(title)
+            new CreateAnArticleCommand(title),
         );
     }
 }
