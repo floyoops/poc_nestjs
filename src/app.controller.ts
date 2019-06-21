@@ -1,12 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import {Controller, Get, Inject} from '@nestjs/common';
+import {ArticleService} from './Infra/Service/ArticleService';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+      @Inject(ArticleService)
+      private readonly articleService: ArticleService,
+  ) {}
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    this.articleService.createNewArticle('test');
+    return 'aaa';
   }
 }
