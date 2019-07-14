@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+  poc-nest-js-db:
+    image: "mariadb"
+    container_name: "poct-nestjs-mariadb"
+    hostname: "poct-nestjs-mariadb"
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: "toor"
+    ports:
+      - "3306:3306"
+    networks:
+      - "default"
+    volumes:
+      - "./var/mysql:/var/lib/mysql"
