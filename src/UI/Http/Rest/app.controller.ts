@@ -1,5 +1,5 @@
 import {Controller, Get, Inject} from '@nestjs/common';
-import {ArticleService} from './Infra/Service/ArticleService';
+import {ArticleService} from '../../../Infra/Service/ArticleService';
 
 @Controller()
 export class AppController {
@@ -8,7 +8,7 @@ export class AppController {
   ) {}
 
   @Get()
-  getHello(): string {
+  getHello() {
     this.articleService.createNewArticle('test');
     return 'Hello World!';
   }

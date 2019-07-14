@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import {ArticleService} from './Infra/Service/ArticleService';
-import {CreateAnArticleCommandHandlerService} from './Infra/Command/CreateAnArticleCommandHandlerService';
-export const commandHandlers = [CreateAnArticleCommandHandlerService];
 import {CqrsModule} from '@nestjs/cqrs';
+import {AppService} from '../../../Infra/Service/app.service';
+import {ArticleService} from '../../../Infra/Service/ArticleService';
+import {CreateAnArticleCommandHandlerService} from '../../../Infra/Command/CreateAnArticleCommandHandlerService';
+
+export const commandHandlers = [CreateAnArticleCommandHandlerService];
 
 describe('AppController', () => {
   let appController: AppController;

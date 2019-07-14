@@ -7,7 +7,7 @@ export class ArticleService {
 
     constructor(private readonly commandBus: CommandBus) {}
 
-    async createNewArticle(title: string) {
+    async createNewArticle(title: string): Promise<CreateAnArticleCommand> {
         return this.commandBus.execute(
             new CreateAnArticleCommand(title),
         );
