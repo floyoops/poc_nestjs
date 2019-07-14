@@ -1,1 +1,0 @@
-{"version":3,"file":"CreateAnArticleCommandHandler.js","sourceRoot":"","sources":["../../../../src/Application/Command/CreateAnArticle/CreateAnArticleCommandHandler.ts"],"names":[],"mappings":";;AAEA,MAAa,6BAA6B;IAC/B,MAAM,CAAC,GAA2B;QACrC,IAAI,CAAC,GAAG,GAAG,CAAC,KAAK,CAAC;IACtB,CAAC;CACJ;AAJD,sEAIC"}
