@@ -2,10 +2,10 @@ version: '3'
 
 services:
 
-  poc-nest-js-db:
+  pnj-db:
     image: "mariadb"
-    container_name: "poct-nestjs-mariadb"
-    hostname: "poct-nestjs-mariadb"
+    container_name: "pnj-db"
+    hostname: "pnj-db"
     restart: "no"
     environment:
       MYSQL_ROOT_PASSWORD: "toor"
@@ -15,3 +15,16 @@ services:
       - "default"
     volumes:
       - "./var/mysql:/var/lib/mysql"
+
+  pnj-adminer:
+    image: "adminer"
+    container_name: "pnj-adminer"
+    hostname: "pnj-adminer"
+    ports:
+      - "8080:8080"
+    networks:
+      - "default"
+
+networks:
+  default:
+    driver: "bridge"

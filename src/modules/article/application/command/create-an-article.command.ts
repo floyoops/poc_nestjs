@@ -1,5 +1,6 @@
 export class CreateAnArticleCommand {
     constructor(
-        public readonly title: string,
+        public uuid: string,
+        public title: string,
     ) {}
 }
