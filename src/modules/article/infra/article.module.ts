@@ -6,6 +6,8 @@ import {ArticleFactoryService} from './factory/article.factory.service';
 import {CommandHandlers} from './command/handlers';
 import {ArticleEntity} from './entity/article.entity';
 import {ArticleCommandRepository} from './repository/article.command.repository';
+import {ArticleQueryRepository} from './repository/article.query.repository';
+import {QueryHandlers} from './query/handlers';
 
 @Module({
   imports: [
@@ -13,9 +15,11 @@ import {ArticleCommandRepository} from './repository/article.command.repository'
       TypeOrmModule.forFeature([ArticleEntity]),
   ],
   providers: [
+    ArticleQueryRepository,
     ArticleCommandRepository,
     ArticleService,
     ArticleFactoryService,
+    ...QueryHandlers,
     ...CommandHandlers,
   ],
   exports: [ArticleService],

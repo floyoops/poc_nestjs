@@ -18,7 +18,7 @@ export class AppController {
     }
   }
 
-  @Get()
+  @Get('/list')
   async list() {
       try {
           return await this.articleService.findAll();

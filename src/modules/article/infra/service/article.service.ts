@@ -1,20 +1,20 @@
-import {CommandBus} from '@nestjs/cqrs';
+import {CommandBus, QueryBus} from '@nestjs/cqrs';
 import {Injectable} from '@nestjs/common';
 import {CreateAnArticleCommand} from '../../application/command/create-an-article.command';
-import {InjectRepository} from '@nestjs/typeorm';
-import {ArticleEntity} from '../entity/article.entity';
-import {Repository} from 'typeorm';
+import {ListAllArticlesQuery} from '../../application/query/list-all-articles.query';
+import {IArticle} from '../../domain/interfaces';
 
 @Injectable()
 export class ArticleService {
 
     constructor(
-      @InjectRepository(ArticleEntity) private readonly articleRepository: Repository<ArticleEntity>,
+      private readonly queryBus: QueryBus,
       private readonly commandBus: CommandBus,
     ) {}
 
-    findAll(): Promise<ArticleEntity[]> {
-      return this.articleRepository.find();
+    async findAll(): Promise<IArticle[]> {
+      const query = new ListAllArticlesQuery();
+      return await this.queryBus.execute(query);
     }
 
     async article(command: CreateAnArticleCommand) {

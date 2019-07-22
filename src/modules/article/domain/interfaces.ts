@@ -12,7 +12,7 @@ export interface IArticleFactory extends FactoryInterface {
 }
 
 export interface IArticleQueryRepository {
-    findAll();
+    findAll(): Promise<IArticle[]>;
 }
 
 export interface IArticleCommandRepository {
