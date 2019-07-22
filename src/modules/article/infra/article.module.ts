@@ -4,13 +4,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {ArticleService} from './service/article.service';
 import {ArticleFactoryService} from './factory/article.factory.service';
 import {CommandHandlers} from './command/handlers';
+import {ArticleEntity} from './entity/article.entity';
+import {ArticleCommandRepository} from './repository/article.command.repository';
 
 @Module({
   imports: [
       CqrsModule,
-      TypeOrmModule.forRoot(),
+      TypeOrmModule.forFeature([ArticleEntity]),
   ],
   providers: [
+    ArticleCommandRepository,
     ArticleService,
     ArticleFactoryService,
     ...CommandHandlers,

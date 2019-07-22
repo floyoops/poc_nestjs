@@ -17,4 +17,13 @@ export class AppController {
         throw new HttpException(e, 500);
     }
   }
+
+  @Get()
+  async list() {
+      try {
+          return await this.articleService.findAll();
+      } catch (e) {
+          throw new HttpException(e, 500);
+      }
+  }
 }
