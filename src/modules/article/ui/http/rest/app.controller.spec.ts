@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
-import {ArticleModule} from '../../../modules/article/infra/article.module';
-import {ArticleService} from '../../../modules/article/infra/service/article.service';
+import {ArticleModule} from '../../../infra/article.module';
+import {ArticleService} from '../../../infra/service/article.service';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -20,8 +20,8 @@ describe('AppController', () => {
     it('should return "Hello World!"', () => {
       const result = 'Hello test !';
       jest.spyOn(articleService, 'article').mockImplementation(() => result);
-      appController.getHello()
-        .then(r => expect(r).toEqual('Hello test !'))
+      appController.new()
+          .then(r => expect(r).toEqual('Hello test !'))
       ;
     });
   });

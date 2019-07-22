@@ -13,6 +13,7 @@ export interface IArticleFactory extends FactoryInterface {
 
 export interface IArticleQueryRepository {
     findAll(): Promise<IArticle[]>;
+    findOne(uuid: string): Promise<IArticle>;
 }
 
 export interface IArticleCommandRepository {

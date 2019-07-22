@@ -11,8 +11,8 @@ import {QueryHandlers} from './query/handlers';
 
 @Module({
   imports: [
-      CqrsModule,
-      TypeOrmModule.forFeature([ArticleEntity]),
+    CqrsModule,
+    TypeOrmModule.forFeature([ArticleEntity]),
   ],
   providers: [
     ArticleQueryRepository,
