@@ -1,4 +1,4 @@
-import {Body, Controller, Get, HttpException, HttpStatus, Inject, Param, Post, Res} from '@nestjs/common';
+import {Body, Controller, Get, HttpException, HttpStatus, Inject, Param, Post, Request} from '@nestjs/common';
 import {ArticleService} from '../../../infra/service/article.service';
 import v4 = require('uuid/v4');
 import {FindOneArticleQuery} from '../../../application/query/find-one-article.query';
@@ -16,7 +16,7 @@ export class AppController {
     async  new(@Body() createAnArticleDto: CreateAnArticleDto) {
         try {
             const command = new CreateAnArticleCommand(AppController.getNewUuid(), createAnArticleDto.title);
-            return await this.articleService.article(command);
+            return this.articleService.article(command);
         } catch (e) {
             throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
