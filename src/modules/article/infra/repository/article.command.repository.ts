@@ -13,4 +13,8 @@ export class ArticleCommandRepository implements IArticleCommandRepository {
     save(article: IArticle) {
         return this.articleRepository.save(article);
     }
+
+    async delete(uuid: string) {
+        return await this.articleRepository.delete({uuid: uuid});
+    }
 }

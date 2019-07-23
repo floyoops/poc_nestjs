@@ -1,4 +1,4 @@
-import {Body, Controller, Get, HttpException, HttpStatus, Inject, Param, Post, Request} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Post, Request} from '@nestjs/common';
 import {ArticleService} from '../../../infra/service/article.service';
 import v4 = require('uuid/v4');
 import {FindOneArticleQuery} from '../../../application/query/find-one-article.query';
@@ -7,6 +7,7 @@ import {CreateAnArticleDto} from './dto/create-an-article.dto';
 import {CreateAnArticleCommand} from '../../../application/command/create-an-article.command';
 import {FindOneArticleDto} from './dto/find-one-article.dto';
 import {IArticle} from '../../../domain/interfaces';
+import {DeleteAnArticleCommand} from '../../../application/command/delete-an-article.command';
 
 @Controller('article')
 export class AppController {
@@ -15,10 +16,10 @@ export class AppController {
     ) {}
 
     @Post('/')
-    async  new(@Body() createAnArticleDto: CreateAnArticleDto) {
+    async create(@Body() createAnArticleDto: CreateAnArticleDto) {
         try {
             const command = new CreateAnArticleCommand(AppController.getNewUuid(), createAnArticleDto.title);
-            return this.articleService.article(command);
+            return this.articleService.create(command);
         } catch (e) {
             throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -38,6 +39,20 @@ export class AppController {
         try {
             const query = new FindOneArticleQuery(params.uuid);
             return await this.findOneArticleOr404(query);
+        } catch (e) {
+            throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Delete('/:uuid')
+    async delete(@Param() params: FindOneArticleDto) {
+        // Check if create exist.
+        await this.findOneArticleOr404(new FindOneArticleQuery(params.uuid));
+
+        // Delete the create.
+        try {
+            const command = new DeleteAnArticleCommand(params.uuid);
+            return await this.articleService.delete(command);
         } catch (e) {
             throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }

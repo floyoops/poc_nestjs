@@ -4,6 +4,7 @@ import {CreateAnArticleCommand} from '../../application/command/create-an-articl
 import {ListAllArticlesQuery} from '../../application/query/list-all-articles.query';
 import {IArticle} from '../../domain/interfaces';
 import {FindOneArticleQuery} from '../../application/query/find-one-article.query';
+import {DeleteAnArticleCommand} from '../../application/command/delete-an-article.command';
 
 @Injectable()
 export class ArticleService {
@@ -22,7 +23,11 @@ export class ArticleService {
         return await this.queryBus.execute(query);
     }
 
-    async article(command: CreateAnArticleCommand) {
+    async delete(command: DeleteAnArticleCommand): Promise<boolean> {
+        return await this.commandBus.execute(command);
+    }
+
+    async create(command: CreateAnArticleCommand) {
         return await this.commandBus.execute(command);
     }
 }

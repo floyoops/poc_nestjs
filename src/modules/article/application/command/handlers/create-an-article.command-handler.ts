@@ -1,5 +1,6 @@
 import {CreateAnArticleCommand} from '../create-an-article.command';
 import {IArticleCommandRepository, IArticleFactory} from '../../../domain/interfaces';
+import {CreateAnArticleException} from '../../../domain/exception/create-an-article.exception';
 
 export class CreateAnArticleCommandHandler {
 
@@ -15,12 +16,13 @@ export class CreateAnArticleCommandHandler {
     }
 
     public handle(cmd: CreateAnArticleCommand): string {
-        const article = this.articleFactory.create(cmd.uuid);
+        const articleUuid = cmd.uuid;
+        const article = this.articleFactory.create(articleUuid);
         article.title = cmd.title;
         try {
             this.articleCommandRepository.save(article);
         } catch (e) {
-            console.log('error', e);
+            throw new CreateAnArticleException(`Error on create article ${articleUuid}`);
         }
         return article.title;
     }

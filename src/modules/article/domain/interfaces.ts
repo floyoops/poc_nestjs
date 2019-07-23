@@ -18,4 +18,5 @@ export interface IArticleQueryRepository {
 
 export interface IArticleCommandRepository {
     save(article: IArticle);
+    delete(uuid: string);
 }

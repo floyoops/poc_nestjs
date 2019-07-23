@@ -19,8 +19,8 @@ describe('AppController', () => {
   describe('root', () => {
     it('should return "Hello World!"', () => {
       const result = 'Hello test !';
-      jest.spyOn(articleService, 'article').mockImplementation(() => result);
-      appController.new()
+      jest.spyOn(articleService, 'create').mockImplementation(() => result);
+      appController.create()
           .then(r => expect(r).toEqual('Hello test !'))
       ;
     });
