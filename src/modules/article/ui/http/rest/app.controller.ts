@@ -5,7 +5,7 @@ import v4 = require('uuid/v4');
 import {FindOneArticleQuery} from '../../../application/query/find-one-article.query';
 import {HttpArticleNotFoundException} from './exception/http-article-not-found.exception';
 
-@Controller()
+@Controller('article')
 export class AppController {
     constructor(
         @Inject(ArticleService) private readonly articleService: ArticleService,
