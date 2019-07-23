@@ -5,6 +5,8 @@ import {FindOneArticleQuery} from '../../../application/query/find-one-article.q
 import {HttpArticleNotFoundException} from './exception/http-article-not-found.exception';
 import {CreateAnArticleDto} from './dto/create-an-article.dto';
 import {CreateAnArticleCommand} from '../../../application/command/create-an-article.command';
+import {FindOneArticleDto} from './dto/find-one-article.dto';
+import {IArticle} from '../../../domain/interfaces';
 
 @Controller('article')
 export class AppController {
@@ -32,17 +34,21 @@ export class AppController {
     }
 
     @Get('/:uuid')
-    async getOne(@Param('uuid') uuid: string) {
+    async findOne(@Param() params: FindOneArticleDto) {
         try {
-            const query = new FindOneArticleQuery(uuid);
-            const article = await this.articleService.findOne(query);
-            if (article === undefined) {
-                throw new HttpArticleNotFoundException('Article not found', HttpStatus.NOT_FOUND);
-            }
-            return article;
+            const query = new FindOneArticleQuery(params.uuid);
+            return await this.findOneArticleOr404(query);
         } catch (e) {
             throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+     private async findOneArticleOr404(query: FindOneArticleQuery): Promise<IArticle> {
+        const article: IArticle|undefined = await this.articleService.findOne(query);
+        if (article === undefined) {
+            throw new HttpArticleNotFoundException('Article not found', HttpStatus.NOT_FOUND);
+        }
+        return article;
     }
 
     private static getNewUuid(): string {
