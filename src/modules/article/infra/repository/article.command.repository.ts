@@ -10,11 +10,16 @@ export class ArticleCommandRepository implements IArticleCommandRepository {
     constructor(@InjectRepository(ArticleEntity) private readonly articleRepository: Repository<ArticleEntity>) {
     }
 
-    save(article: IArticle) {
-        return this.articleRepository.save(article);
+    public async save(article: IArticle): Promise<IArticle> {
+        return await this.articleRepository.save(article);
     }
 
-    async delete(uuid: string) {
-        return await this.articleRepository.delete({uuid: uuid});
+    public async delete(uuid: string): Promise<boolean> {
+        await this.articleRepository.delete({uuid: uuid});
+        return true;
+    }
+
+    public async update(article: IArticle): Promise<IArticle> {
+        return await this.articleRepository.save(article);
     }
 }

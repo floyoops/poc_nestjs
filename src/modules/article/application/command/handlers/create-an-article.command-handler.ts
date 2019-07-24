@@ -15,15 +15,15 @@ export class CreateAnArticleCommandHandler {
         this.articleCommandRepository = articleCommandRepository;
     }
 
-    public handle(cmd: CreateAnArticleCommand): string {
+    public async handle(cmd: CreateAnArticleCommand): Promise<boolean> {
         const articleUuid = cmd.uuid;
         const article = this.articleFactory.create(articleUuid);
         article.title = cmd.title;
         try {
-            this.articleCommandRepository.save(article);
+            await this.articleCommandRepository.save(article);
         } catch (e) {
             throw new CreateAnArticleException(`Error on create article ${articleUuid}`);
         }
-        return article.title;
+        return true;
     }
 }

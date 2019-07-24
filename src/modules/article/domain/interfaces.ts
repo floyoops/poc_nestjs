@@ -17,6 +17,7 @@ export interface IArticleQueryRepository {
 }
 
 export interface IArticleCommandRepository {
-    save(article: IArticle);
-    delete(uuid: string);
+    update(article: IArticle): Promise<IArticle>;
+    save(article: IArticle): Promise<IArticle>;
+    delete(uuid: string): Promise<boolean>;
 }

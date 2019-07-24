@@ -14,7 +14,7 @@ export class ArticleQueryRepository implements IArticleQueryRepository {
         return this.articleRepository.find();
     }
 
-    findOne(uuid: string): Promise<IArticle|undefined> {
-        return this.articleRepository.findOne({where: {uuid: uuid}});
+    async findOne(uuid: string): Promise<IArticle|undefined> {
+        return await  this.articleRepository.findOne({where: {uuid: uuid}});
     }
 }
