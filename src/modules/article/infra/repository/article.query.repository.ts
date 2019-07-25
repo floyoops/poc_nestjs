@@ -10,8 +10,8 @@ export class ArticleQueryRepository implements IArticleQueryRepository {
     constructor(@InjectRepository(ArticleEntity) private readonly articleRepository: Repository<ArticleEntity>) {
     }
 
-    findAll(): Promise<IArticle[]> {
-        return this.articleRepository.find();
+    async findAll(): Promise<IArticle[]> {
+        return await this.articleRepository.find();
     }
 
     async findOne(uuid: string): Promise<IArticle|undefined> {

@@ -9,7 +9,7 @@ export class ListAllArticlesQueryHandler {
         this.repository = repository;
     }
 
-    public handle(query: ListAllArticlesQuery): Promise<IArticle[]> {
-        return this.repository.findAll();
+    public async handle(query: ListAllArticlesQuery): Promise<IArticle[]> {
+        return await this.repository.findAll();
     }
 }
