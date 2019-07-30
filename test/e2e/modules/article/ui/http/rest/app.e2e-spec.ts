@@ -5,6 +5,7 @@ import {FixturesModules} from '../../../../../../../src/modules/fixtures/fixture
 import {FixturesService} from '../../../../../../../src/modules/fixtures/fixtures.service';
 import {INestApplication, INestApplicationContext} from '@nestjs/common';
 import * as assert from 'assert';
+import {getConnection} from 'typeorm';
 
 describe('AppController (e2e)', () => {
     let app: INestApplication;
@@ -21,10 +22,7 @@ describe('AppController (e2e)', () => {
         fixturesService = fixturesModule.get<FixturesService>(FixturesService);
         app = testModule.createNestApplication();
         await app.init();
-    });
-
-    afterEach(() => {
-        fixturesService.clear();
+        await getConnection().synchronize(true);
     });
 
     it('Should get a 404 for an unknown route', () => {
@@ -35,11 +33,40 @@ describe('AppController (e2e)', () => {
 
     it('/article (GET)', async () => {
         await fixturesService.injectArticles();
-        return request(app.getHttpServer())
+        await request(app.getHttpServer())
             .get('/article')
             .expect(200)
             .then(response => {
                 assert.equal(response.body.length, 10);
+            });
+    });
+
+    it('/article/1cf6ded3-e986-4aeb-80ef-51b1b30892e0 (GET)', async () => {
+        await fixturesService.injectArticles();
+        await request(app.getHttpServer())
+            .get('/article/1cf6ded3-e986-4aeb-80ef-51b1b30892e0')
+            .expect(200)
+            .then(async response => {
+                await assert.equal(response.body.uuid, '1cf6ded3-e986-4aeb-80ef-51b1b30892e0');
+                await assert.equal(response.body.title, 'title of the first article');
+            });
+    });
+
+    it('/article (POST)', async () => {
+        await fixturesService.injectArticles();
+        await request(app.getHttpServer())
+            .post('/article')
+            .send({title: 'my title of article test'})
+            .expect(201)
+            .then(async (responseCreated) => {
+                assert.equal(responseCreated.text, 'true');
+                await request(app.getHttpServer())
+                    .get('/article')
+                    .expect(200)
+                    .then(responseListed => {
+                        assert.equal(responseListed.body.length, 11);
+                        assert.equal(responseListed.body[10].title, 'my title of article test');
+                    });
             });
     });
 });

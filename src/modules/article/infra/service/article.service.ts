@@ -35,13 +35,4 @@ export class ArticleService {
     async update(command: UpdateAnArticleCommand): Promise<boolean> {
         return await this.commandBus.execute(command);
     }
-
-    async clear(): Promise<void> {
-        return this.findAll()
-            .then(async (articles: IArticle[]) => {
-                await Promise.all(articles.map(article => {
-                    this.delete(new DeleteAnArticleCommand(article.uuid));
-                }));
-            });
-    }
 }
