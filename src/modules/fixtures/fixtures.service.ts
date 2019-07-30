@@ -9,4 +9,8 @@ export class FixturesService {
         @Inject(ArticleService) private readonly articleService: ArticleService,
     ) {
     }
+
+    public async clear(): Promise<void> {
+        await this.articleService.clear();
+    }
 }
