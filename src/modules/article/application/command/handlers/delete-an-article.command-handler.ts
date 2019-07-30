@@ -13,10 +13,9 @@ export class DeleteAnArticleCommandHandler {
     public async handle(cmd: DeleteAnArticleCommand): Promise<boolean> {
         const articleUuid: string = cmd.uuid;
         try {
-            await this.articleCommandRepository.delete(articleUuid);
+            return await this.articleCommandRepository.delete(articleUuid);
         } catch (e) {
             throw new DeleteAnArticleException(`Error on delete article ${articleUuid}`);
         }
-        return true;
     }
 }

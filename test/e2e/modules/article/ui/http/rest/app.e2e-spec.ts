@@ -86,4 +86,17 @@ describe('AppController (e2e)', () => {
                     });
             });
     });
+
+    it('/article/1cf6ded3-e986-4aeb-80ef-51b1b30892e0 (DELETE)', async () => {
+        await fixturesService.injectArticles();
+        await request(app.getHttpServer())
+            .delete('/article/1cf6ded3-e986-4aeb-80ef-51b1b30892e0')
+            .expect(200)
+            .then(async responseDeleted => {
+                assert.equal(responseDeleted.text, 'true');
+                await request(app.getHttpServer())
+                    .get('/article/1cf6ded3-e986-4aeb-80ef-51b1b30892e0')
+                    .expect(404);
+            });
+    });
 });
