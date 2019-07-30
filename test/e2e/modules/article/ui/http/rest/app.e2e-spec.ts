@@ -69,4 +69,21 @@ describe('AppController (e2e)', () => {
                     });
             });
     });
+
+    it('/article/1cf6ded3-e986-4aeb-80ef-51b1b30892e0 (PUT)', async () => {
+        await fixturesService.injectArticles();
+        await request(app.getHttpServer())
+            .put('/article/1cf6ded3-e986-4aeb-80ef-51b1b30892e0')
+            .send({title: 'title update'})
+            .expect(200)
+            .then(async responseUpdated => {
+                assert.equal(responseUpdated.text, 'true');
+                await request(app.getHttpServer())
+                    .get('/article/1cf6ded3-e986-4aeb-80ef-51b1b30892e0')
+                    .expect(200)
+                    .then(responseOne => {
+                        assert.equal(responseOne.body.title, 'title update');
+                    });
+            });
+    });
 });
