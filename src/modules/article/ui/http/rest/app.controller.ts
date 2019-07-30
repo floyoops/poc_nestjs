@@ -22,7 +22,7 @@ export class AppController {
     public async create(@Body() createAnArticleDto: CreateAnArticleDto): Promise<boolean> {
         const command = new CreateAnArticleCommand(AppController.getNewUuid(), createAnArticleDto.title);
         try {
-            return this.articleService.create(command);
+            return await this.articleService.create(command);
         } catch (e) {
             throw new HttpException('Error on create article', HttpStatus.INTERNAL_SERVER_ERROR);
         }
