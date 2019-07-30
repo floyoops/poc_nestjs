@@ -15,6 +15,12 @@ describe('AppController (e2e)', () => {
         await app.init();
     });
 
+    it('Should get a 404 for an unknown route', () => {
+        return request(app.getHttpServer())
+            .get('/unknown')
+            .expect(404);
+    });
+
     it('/article (GET)', async () => {
         return request(app.getHttpServer())
             .get('/article')
