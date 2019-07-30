@@ -4,6 +4,7 @@ import {AppModule} from '../../../../../../../src/app.module';
 import {FixturesModules} from '../../../../../../../src/modules/fixtures/fixtures.modules';
 import {FixturesService} from '../../../../../../../src/modules/fixtures/fixtures.service';
 import {INestApplication, INestApplicationContext} from '@nestjs/common';
+import * as assert from 'assert';
 
 describe('AppController (e2e)', () => {
     let app: INestApplication;
@@ -11,19 +12,19 @@ describe('AppController (e2e)', () => {
     let fixturesService: FixturesService;
 
     beforeEach(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
+        const testModule: TestingModule = await Test.createTestingModule({
             imports: [AppModule, FixturesModules],
         })
             .compile();
 
-        fixturesModule = moduleFixture.select<FixturesModules>(FixturesModules);
+        fixturesModule = testModule.select<FixturesModules>(FixturesModules);
         fixturesService = fixturesModule.get<FixturesService>(FixturesService);
-        app = moduleFixture.createNestApplication();
+        app = testModule.createNestApplication();
         await app.init();
     });
 
     afterEach(() => {
-        return fixturesService.clear();
+        fixturesService.clear();
     });
 
     it('Should get a 404 for an unknown route', () => {
@@ -33,8 +34,12 @@ describe('AppController (e2e)', () => {
     });
 
     it('/article (GET)', async () => {
+        await fixturesService.injectArticles();
         return request(app.getHttpServer())
             .get('/article')
-            .expect(200);
+            .expect(200)
+            .then(response => {
+                assert.equal(response.body.length, 10);
+            });
     });
 });

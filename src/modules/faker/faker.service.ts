@@ -8,6 +8,6 @@ export class FakerService {
     }
 
     public generateTitle(): string {
-        return faker.name.title;
+        return faker.name.title();
     }
 }

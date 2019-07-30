@@ -63,3 +63,4 @@ typings/
 dist
 /dist
 /var
+/test/data
