@@ -23,8 +23,8 @@ export class FixturesService {
                 this.fakerService.generateTitle(),
             ));
         }
-        return Promise.all(commands.map((c: CreateAnArticleCommand) => {
-            this.articleService.create(c);
+        return Promise.all(commands.map(async (c: CreateAnArticleCommand) => {
+            await this.articleService.create(c);
         }));
     }
 }
