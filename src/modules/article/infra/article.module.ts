@@ -8,6 +8,7 @@ import {ArticleEntity} from './entity/article.entity';
 import {ArticleCommandRepository} from './repository/article.command.repository';
 import {ArticleQueryRepository} from './repository/article.query.repository';
 import {QueryHandlers} from './query/handlers';
+import {ArticleResolver} from '../ui/http/graphql/article.resolver';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import {QueryHandlers} from './query/handlers';
     TypeOrmModule.forFeature([ArticleEntity]),
   ],
   providers: [
+    ArticleResolver,
     ArticleQueryRepository,
     ArticleCommandRepository,
     ArticleService,

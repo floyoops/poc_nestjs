@@ -2,6 +2,7 @@ import {Module} from '@nestjs/common';
 import {ArticleModule} from './modules/article/infra/article.module';
 import {AppController} from './modules/article/ui/http/rest/app.controller';
 import {TypeOrmModule, TypeOrmModuleOptions} from '@nestjs/typeorm';
+import {GraphQLModule} from '@nestjs/graphql';
 
 const optionsMysql: TypeOrmModuleOptions = {
     type: 'mysql',
@@ -34,6 +35,9 @@ if (process.env.NODE_ENV === 'test') {
     imports: [
         TypeOrmModule.forRoot(optionsOrmForRoot),
         ArticleModule,
+        GraphQLModule.forRoot({
+           autoSchemaFile: 'schema.gql',
+        }),
     ],
     controllers: [AppController],
 })
