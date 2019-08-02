@@ -1,4 +1,4 @@
-import {INestApplication, INestApplicationContext} from '@nestjs/common';
+import {INestApplication, INestApplicationContext, ValidationPipe} from '@nestjs/common';
 import {FixturesService} from '../../../../../../../src/modules/fixtures/fixtures.service';
 import {Test, TestingModule} from '@nestjs/testing';
 import * as request from 'supertest';
@@ -21,6 +21,7 @@ describe('Graphql article', () => {
         fixturesModule = testModule.select<FixturesModules>(FixturesModules);
         fixturesService = fixturesModule.get<FixturesService>(FixturesService);
         app = testModule.createNestApplication();
+        app.useGlobalPipes(new ValidationPipe({transform: true}));
         await app.init();
         await getConnection().synchronize(true);
     });
@@ -42,18 +43,31 @@ describe('Graphql article', () => {
             });
     });
 
-    it('should return not exist article', async () => {
+    it('should return article not found', async () => {
         await fixturesService.injectArticles();
         return request(app.getHttpServer())
             .post('/graphql')
             .send({
-                query: '{article(uuid: "fake") {uuid, title}}',
+                query: '{article(uuid:"6fa44be4-8a35-49e4-91b5-f66bbb2e9cbb") {uuid, title}}',
             })
             .then(response => {
-                const error = response.body.errors[0];
-                assert.equal(error.message.statusCode, 404);
-                assert.equal(error.message.message, 'Article fake not found');
-                assert.equal(error.message.error, 'Not Found');
+                assert.equal(response.body.data, null);
+                assert.equal(response.body.errors[0].message, 'Article 6fa44be4-8a35-49e4-91b5-f66bbb2e9cbb not found');
+            });
+    });
+
+    it('400 bad uuid', async () => {
+        await fixturesService.injectArticles();
+        return request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: '{article(uuid: "fake_bad_uuid") {uuid, title}}',
+            })
+            .then(response => {
+                assert.equal(response.body.data, null);
+                assert.equal(response.body.errors[0].message.statusCode, 400);
+                assert.equal(response.body.errors[0].message.error, 'Bad Request');
+                assert.equal(response.body.errors[0].message.message[0].constraints.isUuid, 'uuid must be an UUID');
             });
     });
 });

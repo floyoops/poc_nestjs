@@ -36,6 +36,7 @@ if (process.env.NODE_ENV === 'test') {
         TypeOrmModule.forRoot(optionsOrmForRoot),
         ArticleModule,
         GraphQLModule.forRoot({
+           debug: false,
            autoSchemaFile: 'schema.gql',
         }),
     ],

@@ -2,13 +2,13 @@ import {Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param,
 import {ArticleService} from '../../../infra/service/article.service';
 import v4 = require('uuid/v4');
 import {FindOneArticleQuery} from '../../../application/query/find-one-article.query';
-import {HttpArticleNotFoundException} from './exception/http-article-not-found.exception';
+import {HttpArticleNotFoundException} from '../exception/http-article-not-found.exception';
 import {CreateAnArticleDto} from './dto/create-an-article.dto';
 import {CreateAnArticleCommand} from '../../../application/command/create-an-article.command';
 import {FindOneArticleDto} from './dto/find-one-article.dto';
 import {IArticle} from '../../../domain/interfaces';
 import {DeleteAnArticleCommand} from '../../../application/command/delete-an-article.command';
-import {HttpArticleUpdateException} from './exception/http-article-update.exception';
+import {HttpArticleUpdateException} from '../exception/http-article-update.exception';
 import {UpdateAnArticleCommand} from '../../../application/command/update-an-article.command';
 import {UpdateAnArticleDto} from './dto/update-an-article.dto';
 
