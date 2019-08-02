@@ -65,4 +65,4 @@ dist
 /var
 /test/data
 
-*.gpl
+*.gql
