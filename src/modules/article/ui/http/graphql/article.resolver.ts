@@ -15,6 +15,11 @@ export class ArticleResolver {
     ) {
     }
 
+    @Query(returns => [ArticleEntity])
+    async articles(): Promise<IArticle[]> {
+        return await this.articleService.findAll();
+    }
+
     @Query(returns => ArticleEntity)
     async article(@Args() args: ArticlesArgs): Promise<IArticle|null> {
         const query = new FindOneArticleQuery(args.uuid);

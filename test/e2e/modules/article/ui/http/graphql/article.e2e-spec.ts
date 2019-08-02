@@ -70,4 +70,17 @@ describe('Graphql article', () => {
                 assert.equal(response.body.errors[0].message.message[0].constraints.isUuid, 'uuid must be an UUID');
             });
     });
+
+    it('should return a collection of articles', async () => {
+        await fixturesService.injectArticles();
+        return request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: '{articles {uuid, title}}',
+            })
+            .expect(200)
+            .then(response => {
+                assert.equal(response.body.data.articles.length, 10);
+            });
+    });
 });
