@@ -8,6 +8,11 @@ type ArticleEntity {
   title: String!
 }
 
+type Mutation {
+  createArticle(title: String!): String!
+}
+
 type Query {
+  articles: [ArticleEntity!]!
   article(uuid: String!): ArticleEntity!
 }

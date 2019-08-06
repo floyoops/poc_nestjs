@@ -22,7 +22,7 @@ describe('Graphql article', () => {
                 FixturesModules,
                 TypeOrmModule.forRoot({
                     type: 'sqlite',
-                    database: './test/data/e2e_article_graphql.sqlite',
+                    database: './test/data/e2e_query_article_graphql.sqlite',
                     entities: [ArticleEntity],
                     synchronize: true,
                     keepConnectionAlive: true,
