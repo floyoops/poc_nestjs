@@ -10,6 +10,8 @@ type ArticleEntity {
 
 type Mutation {
   createArticle(title: String!): String!
+  updateArticle(title: String!, uuid: String!): Boolean!
+  deleteArticle(uuid: String!): Boolean!
 }
 
 type Query {

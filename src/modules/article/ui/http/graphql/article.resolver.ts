@@ -14,13 +14,14 @@ import {CreateAnArticleDto} from './dto/create-an-article.dto';
 import {UpdateAnArticleCommand} from '../../../application/command/update-an-article.command';
 import {HttpArticleUpdateException} from '../exception/http-article-update.exception';
 import {UpdateAnArticleDto} from './dto/update-an-article.dto';
+import {DeleteAnArticleCommand} from '../../../application/command/delete-an-article.command';
+import {HttpArticleDeleteException} from '../exception/http-article-delete.exception';
 
 @Resolver(of => ArticleModel)
 export class ArticleResolver {
     constructor(
         @Inject(ArticleService) private readonly articleService: ArticleService,
-    ) {
-    }
+    ) {}
 
     @Query(returns => [ArticleEntity])
     async articles(): Promise<IArticle[]> {
@@ -55,6 +56,16 @@ export class ArticleResolver {
             await this.articleService.update(new UpdateAnArticleCommand(articleUuid, args.title));
         } catch (e) {
             throw new HttpArticleUpdateException(`Error on update article ${articleUuid}`, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return true;
+    }
+
+    @Mutation(returns => Boolean)
+    async deleteArticle(@Args() args: ArticlesArgs): Promise<boolean> {
+        try {
+            await this.articleService.delete(new DeleteAnArticleCommand(args.uuid));
+        } catch (e)  {
+            throw new HttpArticleDeleteException(`Error on delete article ${args.uuid}`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return true;
     }

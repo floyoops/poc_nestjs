@@ -104,4 +104,28 @@ describe('Mutation Graphql article', () => {
                 );
             });
     });
+
+    it ('delete an article', async () => {
+        await fixturesService.injectArticles();
+        return request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: 'mutation {deleteArticle(uuid: "1cf6ded3-e986-4aeb-80ef-51b1b30892e0")}',
+            })
+            .expect(200)
+            .then(async responseDeleted => {
+                assert.equal(responseDeleted.body.data.deleteArticle, true);
+                await request(app.getHttpServer())
+                    .post('/graphql')
+                    .send({
+                        query: '{article(uuid: "1cf6ded3-e986-4aeb-80ef-51b1b30892e0") {uuid, title}}',
+                    })
+                    .expect(200)
+                    .then(responseOne => {
+                        assert.equal(responseOne.body.data, null);
+                        assert.equal(responseOne.body.errors[0].message, 'Article 1cf6ded3-e986-4aeb-80ef-51b1b30892e0 not found');
+                        assert.equal(responseOne.body.errors[0].extensions.exception.status, 404);
+                    });
+            });
+    });
 });
