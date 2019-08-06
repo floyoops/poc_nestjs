@@ -4,6 +4,9 @@ import {AppController} from './modules/article/ui/http/rest/app.controller';
 import {TypeOrmModule, TypeOrmModuleOptions} from '@nestjs/typeorm';
 import {GraphQLModule} from '@nestjs/graphql';
 
+if (process.env.NODE_ENV === 'test') {
+    throw new Error('AppModule forbidden for env test');
+}
 const optionsMysql: TypeOrmModuleOptions = {
     type: 'mysql',
     host: '127.0.0.1',
@@ -16,24 +19,9 @@ const optionsMysql: TypeOrmModuleOptions = {
     keepConnectionAlive: true,
 };
 
-const optionsSqlite: TypeOrmModuleOptions = {
-    type: 'sqlite',
-    database: './test/data/test.sqlite',
-    entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    synchronize: true,
-    keepConnectionAlive: true,
-};
-
-let optionsOrmForRoot: TypeOrmModuleOptions;
-if (process.env.NODE_ENV === 'test') {
-    optionsOrmForRoot = optionsSqlite;
-} else {
-    optionsOrmForRoot = optionsMysql;
-}
-
 @Module({
     imports: [
-        TypeOrmModule.forRoot(optionsOrmForRoot),
+        TypeOrmModule.forRoot(optionsMysql),
         ArticleModule,
         GraphQLModule.forRoot({
            debug: false,

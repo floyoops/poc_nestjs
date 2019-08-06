@@ -2,10 +2,13 @@ import {INestApplication, INestApplicationContext, ValidationPipe} from '@nestjs
 import {FixturesService} from '../../../../../../../src/modules/fixtures/fixtures.service';
 import {Test, TestingModule} from '@nestjs/testing';
 import * as request from 'supertest';
-import {AppModule} from '../../../../../../../src/app.module';
 import {FixturesModules} from '../../../../../../../src/modules/fixtures/fixtures.modules';
 import {getConnection} from 'typeorm';
 import * as assert from 'assert';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {ArticleEntity} from '../../../../../../../src/modules/article/infra/entity/article.entity';
+import {ArticleModule} from '../../../../../../../src/modules/article/infra/article.module';
+import {GraphQLModule} from '@nestjs/graphql';
 
 describe('Graphql article', () => {
     let app: INestApplication;
@@ -14,7 +17,21 @@ describe('Graphql article', () => {
 
     beforeEach(async () => {
         const testModule: TestingModule = await Test.createTestingModule({
-            imports: [AppModule, FixturesModules],
+            imports: [
+                ArticleModule,
+                FixturesModules,
+                TypeOrmModule.forRoot({
+                    type: 'sqlite',
+                    database: './test/data/e2e_article_graphql.sqlite',
+                    entities: [ArticleEntity],
+                    synchronize: true,
+                    keepConnectionAlive: true,
+                }),
+                GraphQLModule.forRoot({
+                    debug: false,
+                    autoSchemaFile: 'schema.gql',
+                }),
+            ],
         })
             .compile();
 

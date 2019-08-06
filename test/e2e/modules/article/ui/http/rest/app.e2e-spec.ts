@@ -1,11 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import {AppModule} from '../../../../../../../src/app.module';
 import {FixturesModules} from '../../../../../../../src/modules/fixtures/fixtures.modules';
 import {FixturesService} from '../../../../../../../src/modules/fixtures/fixtures.service';
 import {INestApplication, INestApplicationContext} from '@nestjs/common';
 import * as assert from 'assert';
 import {getConnection} from 'typeorm';
+import {ArticleModule} from '../../../../../../../src/modules/article/infra/article.module';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {ArticleEntity} from '../../../../../../../src/modules/article/infra/entity/article.entity';
+import {AppController} from '../../../../../../../src/modules/article/ui/http/rest/app.controller';
 
 describe('AppController (e2e)', () => {
     let app: INestApplication;
@@ -14,7 +17,18 @@ describe('AppController (e2e)', () => {
 
     beforeEach(async () => {
         const testModule: TestingModule = await Test.createTestingModule({
-            imports: [AppModule, FixturesModules],
+            imports: [
+                ArticleModule,
+                FixturesModules,
+                TypeOrmModule.forRoot({
+                    type: 'sqlite',
+                    database: './test/data/e2e_article_rest.sqlite',
+                    entities: [ArticleEntity],
+                    synchronize: true,
+                    keepConnectionAlive: true,
+                }),
+            ],
+            controllers: [AppController],
         })
             .compile();
 
