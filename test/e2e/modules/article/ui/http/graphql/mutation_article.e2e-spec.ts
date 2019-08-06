@@ -64,4 +64,44 @@ describe('Mutation Graphql article', () => {
                     });
             });
     });
+
+    it('update an article', async () => {
+        await fixturesService.injectArticles();
+        return request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: 'mutation {updateArticle(uuid: "1cf6ded3-e986-4aeb-80ef-51b1b30892e0", title: "update the title")}',
+            })
+            .expect(200)
+            .then(async responseUpdated => {
+                assert.equal(responseUpdated.body.data.updateArticle, true);
+                await request(app.getHttpServer())
+                    .post('/graphql')
+                    .send({
+                        query: '{article(uuid: "1cf6ded3-e986-4aeb-80ef-51b1b30892e0") {uuid, title}}',
+                    })
+                    .expect(200)
+                    .then(responseOne => {
+                        assert.equal(responseOne.body.data.article.title, 'update the title');
+                    });
+            });
+    });
+
+    it ('update an article 400', async () => {
+        await fixturesService.injectArticles();
+        return request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: 'mutation {updateArticle(uuid: "1cf6ded3-e986-4aeb-80ef-51b1b30892e0", title: "a")}',
+            })
+            .expect(200)
+            .then(async responseUpdated => {
+                assert.equal(responseUpdated.body.data, null);
+                assert.equal(responseUpdated.body.errors[0].message.statusCode, 400);
+                assert.equal(
+                    responseUpdated.body.errors[0].message.message[0].constraints.minLength,
+                    'Title is too short. Minimal length is a characters',
+                );
+            });
+    });
 });
