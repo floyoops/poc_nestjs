@@ -26,6 +26,7 @@ const optionsMysql: TypeOrmModuleOptions = {
         GraphQLModule.forRoot({
            debug: false,
            autoSchemaFile: 'schema.gql',
+           installSubscriptionHandlers: true,
         }),
     ],
     controllers: [AppController],

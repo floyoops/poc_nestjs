@@ -1,4 +1,5 @@
-import {Args, Resolver, Query, Mutation} from '@nestjs/graphql';
+import {Args, Resolver, Query, Mutation, Subscription} from '@nestjs/graphql';
+import { PubSub } from 'graphql-subscriptions';
 import {ArticleModel} from '../../../domain/model/article.model';
 import {ArticleEntity} from '../../../infra/entity/article.entity';
 import {HttpStatus, Inject} from '@nestjs/common';
@@ -16,6 +17,9 @@ import {HttpArticleUpdateException} from '../exception/http-article-update.excep
 import {UpdateAnArticleDto} from './dto/update-an-article.dto';
 import {DeleteAnArticleCommand} from '../../../application/command/delete-an-article.command';
 import {HttpArticleDeleteException} from '../exception/http-article-delete.exception';
+import {ArticleCreatedEvent} from '../../../domain/event/article-created.event';
+
+const pubSub = new PubSub();
 
 @Resolver(of => ArticleModel)
 export class ArticleResolver {
@@ -41,6 +45,7 @@ export class ArticleResolver {
         } catch (e) {
             throw new HttpArticleCreateException(`Error on create article`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        pubSub.publish('articleCreated', new ArticleCreatedEvent(articleUuid));
         return articleUuid;
     }
 
@@ -66,6 +71,13 @@ export class ArticleResolver {
             throw new HttpArticleDeleteException(`Error on delete article ${articleUuid}`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return true;
+    }
+
+    @Subscription(returns => String, {
+        resolve: (payload: ArticleCreatedEvent) => payload.articleUuid,
+    })
+    articleCreated() {
+        return pubSub.asyncIterator('articleCreated');
     }
 
     private async findOneArticleOr404(articleUuid: string): Promise<IArticle> {
