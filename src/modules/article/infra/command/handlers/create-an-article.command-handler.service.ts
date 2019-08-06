@@ -16,7 +16,7 @@ export class CreateAnArticleCommandHandlerService extends CreateAnArticleCommand
         super(articleFactoryService, articleCommandRepository);
     }
 
-    async execute(command: CreateAnArticleCommand): Promise<any> {
+    async execute(command: CreateAnArticleCommand): Promise<boolean> {
         return await this.handle(command);
     }
 }

@@ -9,6 +9,12 @@ import {ArticleCommandRepository} from './repository/article.command.repository'
 import {ArticleQueryRepository} from './repository/article.query.repository';
 import {QueryHandlers} from './query/handlers';
 import {ArticleResolver} from '../ui/http/graphql/article.resolver';
+import {PubSub} from 'graphql-subscriptions';
+
+const pubSub = {
+  provide: 'PUB_SUB',
+  useValue: new PubSub(),
+};
 
 @Module({
   imports: [
@@ -23,6 +29,7 @@ import {ArticleResolver} from '../ui/http/graphql/article.resolver';
     ArticleFactoryService,
     ...QueryHandlers,
     ...CommandHandlers,
+    pubSub,
   ],
   exports: [ArticleService],
 })

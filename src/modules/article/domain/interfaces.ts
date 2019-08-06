@@ -21,3 +21,7 @@ export interface IArticleCommandRepository {
     save(article: IArticle): Promise<IArticle>;
     delete(uuid: string): Promise<boolean>;
 }
+
+export interface IDomainEvent {
+    getName(): string;
+}
