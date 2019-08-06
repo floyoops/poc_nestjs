@@ -105,6 +105,20 @@ describe('Mutation Graphql article', () => {
             });
     });
 
+    it ('update an article 404', async () => {
+        await fixturesService.injectArticles();
+        return request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: 'mutation {updateArticle(uuid: "a39aa37e-a337-4329-b824-002d95c6a186", title: "update the title")}',
+            })
+            .expect(200)
+            .then(async responseUpdated => {
+                assert.equal(responseUpdated.body.errors[0].message, 'Article a39aa37e-a337-4329-b824-002d95c6a186 not found');
+                assert.equal(responseUpdated.body.errors[0].extensions.exception.status, 404);
+            });
+    });
+
     it ('delete an article', async () => {
         await fixturesService.injectArticles();
         return request(app.getHttpServer())
@@ -126,6 +140,33 @@ describe('Mutation Graphql article', () => {
                         assert.equal(responseOne.body.errors[0].message, 'Article 1cf6ded3-e986-4aeb-80ef-51b1b30892e0 not found');
                         assert.equal(responseOne.body.errors[0].extensions.exception.status, 404);
                     });
+            });
+    });
+
+    it ('delete an article with fake uuid', async () => {
+        await fixturesService.injectArticles();
+        return request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: 'mutation {deleteArticle(uuid: "fakefake-fake-fake-fake-fakefakefake")}',
+            })
+            .expect(200)
+            .then(responseDeleted => {
+                assert.equal(responseDeleted.body.errors[0].message.statusCode, 400);
+                assert.equal(responseDeleted.body.errors[0].message.message[0].constraints.isUuid, 'uuid must be an UUID');
+            });
+    });
+
+    it ('delete an article 404', async () => {
+        await fixturesService.injectArticles();
+        return request(app.getHttpServer())
+            .post('/graphql')
+            .send({
+                query: 'mutation {deleteArticle(uuid: "27ef8039-a638-4843-a257-9fdb705f77a0")}',
+            })
+            .expect(200)
+            .then(responseDeleted => {
+                assert.equal(responseDeleted.body.errors[0].message, 'Article 27ef8039-a638-4843-a257-9fdb705f77a0 not found');
             });
     });
 });

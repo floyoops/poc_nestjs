@@ -29,13 +29,8 @@ export class ArticleResolver {
     }
 
     @Query(returns => ArticleEntity)
-    async article(@Args() args: ArticlesArgs): Promise<IArticle|null> {
-        const query = new FindOneArticleQuery(args.uuid);
-        const article = await this.articleService.findOne(query);
-        if (article === undefined) {
-            throw new HttpArticleNotFoundException(`Article ${args.uuid} not found`, HttpStatus.NOT_FOUND);
-        }
-        return article;
+    article(@Args() args: ArticlesArgs): Promise<IArticle|null> {
+        return this.findOneArticleOr404(args.uuid);
     }
 
     @Mutation(returns => String)
@@ -52,6 +47,7 @@ export class ArticleResolver {
     @Mutation(returns => Boolean)
     async updateArticle(@Args() args: UpdateAnArticleDto): Promise<boolean> {
         const articleUuid: string = args.uuid;
+        await this.findOneArticleOr404(articleUuid);
         try {
             await this.articleService.update(new UpdateAnArticleCommand(articleUuid, args.title));
         } catch (e) {
@@ -62,12 +58,23 @@ export class ArticleResolver {
 
     @Mutation(returns => Boolean)
     async deleteArticle(@Args() args: ArticlesArgs): Promise<boolean> {
+        const articleUuid = args.uuid;
+        await this.findOneArticleOr404(articleUuid);
         try {
-            await this.articleService.delete(new DeleteAnArticleCommand(args.uuid));
+            await this.articleService.delete(new DeleteAnArticleCommand(articleUuid));
         } catch (e)  {
-            throw new HttpArticleDeleteException(`Error on delete article ${args.uuid}`, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpArticleDeleteException(`Error on delete article ${articleUuid}`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return true;
+    }
+
+    private async findOneArticleOr404(articleUuid: string): Promise<IArticle> {
+        const query = new FindOneArticleQuery(articleUuid);
+        const article = await this.articleService.findOne(query);
+        if (article === undefined) {
+            throw new HttpArticleNotFoundException(`Article ${articleUuid} not found`, HttpStatus.NOT_FOUND);
+        }
+        return article;
     }
 
     private static getNewUuid(): string {
