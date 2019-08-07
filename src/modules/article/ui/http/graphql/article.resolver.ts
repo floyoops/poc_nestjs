@@ -18,6 +18,8 @@ import {UpdateAnArticleDto} from './dto/update-an-article.dto';
 import {DeleteAnArticleCommand} from '../../../application/command/delete-an-article.command';
 import {HttpArticleDeleteException} from '../exception/http-article-delete.exception';
 import {ArticleCreatedEvent} from '../../../domain/event/article-created.event';
+import {ArticleUpdatedEvent} from '../../../domain/event/article-updated.event';
+import {ArticleDeletedEvent} from '../../../domain/event/article-deleted.event';
 
 @Resolver(of => ArticleModel)
 export class ArticleResolver {
@@ -57,6 +59,7 @@ export class ArticleResolver {
         } catch (e) {
             throw new HttpArticleUpdateException(`Error on update article ${articleUuid}`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        this.pubSub.publish('articleUpdated', new ArticleUpdatedEvent(articleUuid));
         return true;
     }
 
@@ -69,6 +72,7 @@ export class ArticleResolver {
         } catch (e)  {
             throw new HttpArticleDeleteException(`Error on delete article ${articleUuid}`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        this.pubSub.publish('articleDeleted', new ArticleDeletedEvent(articleUuid));
         return true;
     }
 
@@ -77,6 +81,20 @@ export class ArticleResolver {
     })
     articleCreated() {
         return this.pubSub.asyncIterator('articleCreated');
+    }
+
+    @Subscription(returns => String, {
+        resolve: (payload: ArticleUpdatedEvent) => payload.articleUuid,
+    })
+    articleUpdated() {
+        return this.pubSub.asyncIterator('articleUpdated');
+    }
+
+    @Subscription(returns => String, {
+        resolve: (payload: ArticleDeletedEvent) => payload.articleUuid,
+    })
+    articleDeleted() {
+        return this.pubSub.asyncIterator('articleDeleted');
     }
 
     private async findOneArticleOr404(articleUuid: string): Promise<IArticle> {

@@ -1,12 +1,12 @@
 import {IDomainEvent} from '../interfaces';
 
-export class ArticleCreatedEvent implements IDomainEvent {
+export class ArticleUpdatedEvent implements IDomainEvent {
     public readonly articleUuid: string;
     constructor(articleUuid: string) {
         this.articleUuid = articleUuid;
     }
 
-    public getName(): string {
-        return 'articleCreated';
+    getName(): string {
+        return 'articleUpdated';
     }
 }
