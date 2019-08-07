@@ -19,12 +19,11 @@ import {DeleteAnArticleCommand} from '../../../application/command/delete-an-art
 import {HttpArticleDeleteException} from '../exception/http-article-delete.exception';
 import {ArticleCreatedEvent} from '../../../domain/event/article-created.event';
 
-const pubSub = new PubSub();
-
 @Resolver(of => ArticleModel)
 export class ArticleResolver {
     constructor(
         @Inject(ArticleService) private readonly articleService: ArticleService,
+        @Inject('PUB_SUB') private readonly pubSub: PubSub,
     ) {}
 
     @Query(returns => [ArticleEntity])
@@ -45,7 +44,7 @@ export class ArticleResolver {
         } catch (e) {
             throw new HttpArticleCreateException(`Error on create article`, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        pubSub.publish('articleCreated', new ArticleCreatedEvent(articleUuid));
+        this.pubSub.publish('articleCreated', new ArticleCreatedEvent(articleUuid));
         return articleUuid;
     }
 
@@ -77,7 +76,7 @@ export class ArticleResolver {
         resolve: (payload: ArticleCreatedEvent) => payload.articleUuid,
     })
     articleCreated() {
-        return pubSub.asyncIterator('articleCreated');
+        return this.pubSub.asyncIterator('articleCreated');
     }
 
     private async findOneArticleOr404(articleUuid: string): Promise<IArticle> {
