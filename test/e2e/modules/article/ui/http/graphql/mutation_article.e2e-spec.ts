@@ -9,6 +9,14 @@ import {INestApplication, INestApplicationContext, ValidationPipe} from '@nestjs
 import {getConnection} from 'typeorm';
 import * as request from 'supertest';
 import * as assert from 'assert';
+import {WebSocketLink} from 'apollo-link-ws';
+import * as ws from 'ws';
+import ApolloClient from 'apollo-client';
+import {gql, InMemoryCache} from 'apollo-boost';
+import { split } from 'apollo-link';
+import {getMainDefinition} from 'apollo-utilities';
+import { createHttpLink } from 'apollo-link-http';
+import fetch from 'node-fetch';
 
 describe('Mutation Graphql article', () => {
     let app: INestApplication;
@@ -30,6 +38,7 @@ describe('Mutation Graphql article', () => {
                 GraphQLModule.forRoot({
                     debug: false,
                     autoSchemaFile: 'schema.gql',
+                    installSubscriptionHandlers: true,
                 }),
             ],
         })
@@ -44,25 +53,72 @@ describe('Mutation Graphql article', () => {
     });
 
     it('create new article', async () => {
-        await fixturesService.injectArticles();
-        return request(app.getHttpServer())
-            .post('/graphql')
-            .send({
-                query: 'mutation {createArticle(title: "a one title")}',
-            })
-            .expect(200)
-            .then(async responseCreated => {
-                expect(responseCreated.body.data.createArticle).not.toBeNull();
-                await request(app.getHttpServer())
-                    .post('/graphql')
-                    .send({
-                        query: '{articles {uuid, title}}',
-                    })
-                    .expect(200)
-                    .then(responseListed => {
-                        assert.equal(responseListed.body.data.articles.length, 11);
-                    });
+        await new Promise(async (resolve) => {
+            const httpLink = createHttpLink({
+                uri: 'http://localhost:3000/graphql',
+                fetch,
             });
+            const wsLink = new WebSocketLink({
+                uri: `ws://localhost:3000/graphql`,
+                options: {
+                    reconnect: true,
+                },
+                webSocketImpl: ws,
+            });
+            const link = split(
+                ({ query }) => {
+                    const definition = getMainDefinition(query);
+                    return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+                },
+                wsLink,
+                httpLink,
+            );
+            console.log('aaaaaaaaaaaa');
+            const cache = new InMemoryCache();
+            const client = new ApolloClient({link, cache});
+            const subscriptionArticleCreated = `subscription CreateArticle {articleCreated}`;
+            await client.subscribe({
+                query: gql`
+                    ${subscriptionArticleCreated}
+                `,
+                fetchPolicy: 'no-cache',
+            }).subscribe(msg => {
+                console.log('zzzzzzzzzz', msg);
+                resolve(true);
+            });
+            const mutationArticle = `mutation {createArticle(title: "mqlsdkjfqsdf")}`;
+            await client.query({
+                query: gql`
+                    ${mutationArticle}
+                `,
+                fetchPolicy: 'no-cache',
+            });
+
+            await fixturesService.injectArticles();
+            await new Promise(wakeUp => setTimeout(wakeUp, 1000));
+            await request(app.getHttpServer())
+                .post('/graphql')
+                .send({
+                    query: 'mutation {createArticle(title: "a one title")}',
+                })
+                .expect(200)
+                .then(async responseCreated => {
+                    console.log('bbbbbbbbbbbbbbbbbbbbbbbbb');
+                    expect(responseCreated.body.data.createArticle).not.toBeNull();
+                    console.log('cccccccccccccc');
+                    await request(app.getHttpServer())
+                        .post('/graphql')
+                        .send({
+                            query: '{articles {uuid, title}}',
+                        })
+                        .expect(200)
+                        .then(responseListed => {
+                            console.log('dddddddddddddddddddddddd');
+                            assert.equal(responseListed.body.data.articles.length, 11);
+                        });
+                });
+            console.log('eeeeeeeeeeeeeeeeeeee');
+        });
     });
 
     it('update an article', async () => {
