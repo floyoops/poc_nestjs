@@ -97,6 +97,11 @@ export class ArticleResolver {
         return this.pubSub.asyncIterator('articleDeleted');
     }
 
+    @Subscription(returns => String)
+    testMq() {
+        return this.pubSub.asyncIterator('testMq');
+    }
+
     private async findOneArticleOr404(articleUuid: string): Promise<IArticle> {
         const query = new FindOneArticleQuery(articleUuid);
         const article = await this.articleService.findOne(query);

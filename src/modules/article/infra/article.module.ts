@@ -11,7 +11,7 @@ import {QueryHandlers} from './query/handlers';
 import {ArticleResolver} from '../ui/http/graphql/article.resolver';
 import {PubSub} from 'graphql-subscriptions';
 
-const pubSub = {
+export const pubSub = {
   provide: 'PUB_SUB',
   useValue: new PubSub(),
 };
@@ -31,7 +31,9 @@ const pubSub = {
     ...CommandHandlers,
     pubSub,
   ],
-  exports: [ArticleService],
+  exports: [
+    ArticleService,
+  ],
 })
 
 export class ArticleModule {}
