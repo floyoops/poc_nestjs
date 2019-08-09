@@ -97,7 +97,9 @@ export class ArticleResolver {
         return this.pubSub.asyncIterator('articleDeleted');
     }
 
-    @Subscription(returns => String)
+    @Subscription(returns => String, {
+        resolve: payload => payload,
+    })
     testMq() {
         return this.pubSub.asyncIterator('testMq');
     }

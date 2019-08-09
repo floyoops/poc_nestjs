@@ -1,6 +1,7 @@
 import {Module} from '@nestjs/common';
 import {ConsumerService} from './consumer.service';
 import {AmqpModule} from 'nestjs-amqp/dist';
+import {pubSub} from '../article/infra/article.module';
 
 const optionsRabbitMq = {
     name: 'rabbitmq',
@@ -16,6 +17,7 @@ const optionsRabbitMq = {
     ],
     providers: [
         ConsumerService,
+        pubSub,
     ],
 })
 

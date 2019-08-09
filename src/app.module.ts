@@ -3,7 +3,6 @@ import {ArticleModule} from './modules/article/infra/article.module';
 import {AppController} from './modules/article/ui/http/rest/app.controller';
 import {TypeOrmModule, TypeOrmModuleOptions} from '@nestjs/typeorm';
 import {GraphQLModule} from '@nestjs/graphql';
-import {AmqpModule, AmqpOptionsInterface} from 'nestjs-amqp/dist';
 import {ConsumerModule} from './modules/consumer/consumer.module';
 
 if (process.env.NODE_ENV === 'test') {
