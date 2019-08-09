@@ -1,29 +1,19 @@
 import {Module} from '@nestjs/common';
 import {ArticleModule} from './modules/article/infra/article.module';
 import {AppController} from './modules/article/ui/http/rest/app.controller';
-import {TypeOrmModule, TypeOrmModuleOptions} from '@nestjs/typeorm';
+import {TypeOrmModule} from '@nestjs/typeorm';
 import {GraphQLModule} from '@nestjs/graphql';
 import {ConsumerModule} from './modules/consumer/consumer.module';
+import {configuration} from './configuration';
 
 if (process.env.NODE_ENV === 'test') {
     throw new Error('AppModule forbidden for env test');
 }
-const optionsMysql: TypeOrmModuleOptions = {
-    type: 'mysql',
-    host: '127.0.0.1',
-    port: 3306,
-    username: 'root',
-    password: 'toor',
-    database: 'poc_nestjs',
-    entities: [__dirname + '/**/*.entity{.ts,.js}'],
-    synchronize: true,
-    keepConnectionAlive: true,
-};
 
 @Module({
     imports: [
         ConsumerModule,
-        TypeOrmModule.forRoot(optionsMysql),
+        TypeOrmModule.forRoot(configuration.db),
         ArticleModule,
         GraphQLModule.forRoot({
            debug: false,

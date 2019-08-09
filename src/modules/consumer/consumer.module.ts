@@ -2,18 +2,11 @@ import {Module} from '@nestjs/common';
 import {ConsumerService} from './consumer.service';
 import {AmqpModule} from 'nestjs-amqp/dist';
 import {pubSub} from '../article/infra/article.module';
-
-const optionsRabbitMq = {
-    name: 'rabbitmq',
-    hostname: 'localhost',
-    port: 5672,
-    username: 'guest',
-    password: 'guest',
-};
+import {configuration} from '../../configuration';
 
 @Module({
     imports: [
-        AmqpModule.forRoot(optionsRabbitMq),
+        AmqpModule.forRoot(configuration.rabbitmq),
     ],
     providers: [
         ConsumerService,
